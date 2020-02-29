@@ -1,4 +1,4 @@
-package com.ywh.netty;
+package com.ywh.example.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -25,14 +25,21 @@ public class NettyClient {
 
         Bootstrap bootstrap = new Bootstrap();
         bootstrap
-            // 指定线程模型
+            // 指定线程模型，IO 类型为 NIO
             .group(new NioEventLoopGroup())
-            // 指定 IO 类型为 NIO
             .channel(NioSocketChannel.class)
-            // IO 处理逻辑
             .handler(new ChannelInitializer<SocketChannel>() {
+
+                /**
+                 * 指定连接数据读写逻辑（责任链模式）
+                 *
+                 * @param ch
+                 * @throws Exception
+                 */
                 @Override
-                public void initChannel(SocketChannel ch) {
+                protected void initChannel(SocketChannel ch) throws Exception {
+                    // 添加逻辑处理器
+                    ch.pipeline().addLast(new FirstClientHandler());
                 }
             })
             .attr(AttributeKey.newInstance("clientName"), "nettyClient")
@@ -41,11 +48,14 @@ public class NettyClient {
             .option(ChannelOption.TCP_NODELAY, true)
         ;
         // 建立连接
-        connect(bootstrap, "ywh.im", 80, MAX_RETRY);
+        connect(bootstrap, "localhost", 1000, MAX_RETRY);
     }
 
     /**
-     * 失败重连（递归 MAX_RETRY）
+     * 失败重连（递归 MAX_RETRY 次）
+     * 1. 连接成功；
+     * 2. 连接失败，已达到最大重试次数
+     * 3. 连接失败，未达到最大重试次数
      *
      * @param bootstrap
      * @param host
@@ -60,11 +70,12 @@ public class NettyClient {
             } else {
                 // 第几次重连
                 int order = (MAX_RETRY - retry) + 1;
+
                 // 本次重连的间隔：指数退避策略
                 int delay = 1 << order;
-                System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
-                bootstrap.config().group().schedule(()
-                    -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
+                System.err.println(new Date() + ": 连接失败，执行第 " + order + " 次重连...");
+                bootstrap.config().group().schedule(
+                    () -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.ywh.io.bio;
+package com.ywh.example.bio;
 
 import java.io.IOException;
 import java.io.InputStream;
