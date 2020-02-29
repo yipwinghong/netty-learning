@@ -1,4 +1,4 @@
-package com.ywh.netty.client;
+package com.ywh.netty.client.handler;
 
 import com.ywh.netty.codec.PacketCodeC;
 import com.ywh.netty.protocol.Packet;
@@ -19,6 +19,7 @@ import java.util.UUID;
  * @author ywh
  * @since 29/02/2020
  */
+@Deprecated
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override

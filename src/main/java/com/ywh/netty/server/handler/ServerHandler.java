@@ -1,4 +1,4 @@
-package com.ywh.netty.server;
+package com.ywh.netty.server.handler;
 
 import com.ywh.netty.codec.PacketCodeC;
 import com.ywh.netty.protocol.Packet;
@@ -26,10 +26,11 @@ import java.util.Date;
  * @author ywh
  * @since 29/02/2020
  */
+@Deprecated
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf requestByteBuf = (ByteBuf) msg;
 
         // 解码

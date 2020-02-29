@@ -1,5 +1,10 @@
 package com.ywh.netty.server;
 
+import com.ywh.netty.codec.PacketDecoder;
+import com.ywh.netty.codec.PacketEncoder;
+import com.ywh.netty.codec.Spliter;
+import com.ywh.netty.server.handler.LoginRequestHandler;
+import com.ywh.netty.server.handler.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -54,7 +59,12 @@ public class NettyServer {
                 @Override
                 protected void initChannel(NioSocketChannel ch) {
                     // 添加逻辑处理器
-                    ch.pipeline().addLast(new ServerHandler());
+                    // ch.pipeline().addLast(new ServerHandler());
+                    ch.pipeline().addLast(new Spliter());
+                    ch.pipeline().addLast(new PacketDecoder());
+                    ch.pipeline().addLast(new LoginRequestHandler());
+                    ch.pipeline().addLast(new MessageRequestHandler());
+                    ch.pipeline().addLast(new PacketEncoder());
                 }
             })
         ;

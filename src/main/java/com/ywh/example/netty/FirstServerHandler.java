@@ -22,10 +22,10 @@ public class FirstServerHandler extends ChannelInboundHandlerAdapter {
         ByteBuf byteBuf = (ByteBuf) msg;
         System.out.println(new Date() + ": 服务端读取数据 -> " + byteBuf.toString(StandardCharsets.UTF_8));
 
-        // 回写数据给客户端
-        // 注意 ByteBuf 使用堆外内存，不被 JVM 管理，如果没有手工释放会造成内存泄漏
-        ByteBuf writeByteBuf = ctx.alloc().buffer();
-        writeByteBuf.writeBytes("Welcome!".getBytes(StandardCharsets.UTF_8));
-        ctx.channel().writeAndFlush(writeByteBuf);
+//        // 回写数据给客户端
+//        // 注意 ByteBuf 使用堆外内存，不被 JVM 管理，如果没有手工释放会造成内存泄漏
+//        ByteBuf writeByteBuf = ctx.alloc().buffer();
+//        writeByteBuf.writeBytes("Welcome!".getBytes(StandardCharsets.UTF_8));
+//        ctx.channel().writeAndFlush(writeByteBuf);
     }
 }

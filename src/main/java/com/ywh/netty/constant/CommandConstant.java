@@ -16,4 +16,8 @@ public interface CommandConstant {
     Byte MESSAGE_RESPONSE = 4;
 
     Integer MAGIC_NUMBER = 0x12345678;
+
+    Integer LENGTH_FIELD_OFFSET = 7;
+
+    Integer LENGTH_FIELD_LENGTH = 4;
 }

@@ -1,6 +1,10 @@
 package com.ywh.netty.client;
 
-import com.ywh.netty.codec.PacketCodeC;
+import com.ywh.netty.client.handler.LoginResponseHandler;
+import com.ywh.netty.client.handler.MessageResponseHandler;
+import com.ywh.netty.codec.PacketDecoder;
+import com.ywh.netty.codec.PacketEncoder;
+import com.ywh.netty.codec.Spliter;
 import com.ywh.netty.protocol.request.MessageRequestPacket;
 import com.ywh.netty.util.LoginUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -45,7 +49,12 @@ public class NettyClient {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
                     // 添加逻辑处理器
-                    ch.pipeline().addLast(new ClientHandler());
+                    // ch.pipeline().addLast(new ClientHandler());
+                    ch.pipeline().addLast(new Spliter());
+                    ch.pipeline().addLast(new PacketDecoder());
+                    ch.pipeline().addLast(new LoginResponseHandler());
+                    ch.pipeline().addLast(new MessageResponseHandler());
+                    ch.pipeline().addLast(new PacketEncoder());
                 }
             })
             .attr(AttributeKey.newInstance("clientName"), "nettyClient")
@@ -104,8 +113,8 @@ public class NettyClient {
                 System.out.println("输入消息发送至服务端: ");
                 Scanner sc = new Scanner(System.in);
                 String line = sc.nextLine();
-                MessageRequestPacket packet = new MessageRequestPacket(line);
-                channel.writeAndFlush(PacketCodeC.encode(channel.alloc(), packet));
+                // channel.writeAndFlush(PacketCodeC.encode(channel.alloc(), new MessageRequestPacket(line)));
+                channel.writeAndFlush(new MessageRequestPacket(line));
             }
         }).start();
     }

@@ -9,6 +9,7 @@ import com.ywh.netty.serializer.Serializer;
 import com.ywh.netty.serializer.impl.JSONSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +23,9 @@ import static com.ywh.netty.constant.CommandConstant.*;
  * 2. 版本号：1bytes，预留字段，用于协议升级（类似 IPV4 和 IPV6）
  * 3. 序列化算法：1bytes
  * 4. 指令：1bytes
- * 5. 数据长度：4bytes
+ * 5. 数据长度：4bytes，便于拆包：使用 {@link LengthFieldBasedFrameDecoder}（基于长度域拆包器），长度域相对整个数据包的偏移量为 4 + 1 + 1 + 1 == 7
  * 6. 数据：Nbytes
+ *
  *
  * @author ywh
  */
@@ -32,8 +34,6 @@ public class PacketCodeC {
     private static final Map<Byte, Class<? extends Packet>> PACKET_TYPE_MAP;
 
     private static final Map<Byte, Serializer> SERIALIZER_MAP;
-
-    public static final PacketCodeC INSTANCE = new PacketCodeC();
 
     static {
         PACKET_TYPE_MAP = new HashMap<>();
@@ -57,7 +57,10 @@ public class PacketCodeC {
         // 创建 ByteBuf 对象（创建一个直接内存，不受 JVM 堆管理，写到 IO 缓冲区效率更高）
         // ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         ByteBuf byteBuf = byteBufAllocator.buffer();
+        return encode(byteBuf, packet);
+    }
 
+    public static ByteBuf encode(ByteBuf byteBuf, Packet packet) {
         // 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
