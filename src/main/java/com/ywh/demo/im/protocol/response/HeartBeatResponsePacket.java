@@ -1,7 +1,7 @@
 package com.ywh.demo.im.protocol.response;
 
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 
 import static com.ywh.demo.im.constant.CommandConstant.HEARTBEAT_RESPONSE;
 
@@ -10,7 +10,7 @@ import static com.ywh.demo.im.constant.CommandConstant.HEARTBEAT_RESPONSE;
  *
  * @author ywh
  */
-public class HeartBeatResponsePacket extends Packet {
+public class HeartBeatResponsePacket extends BasePacket {
     @Override
     public Byte getCommand() {
         return HEARTBEAT_RESPONSE;

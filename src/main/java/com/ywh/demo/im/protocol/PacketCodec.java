@@ -3,7 +3,7 @@ package com.ywh.demo.im.protocol;
 import com.ywh.demo.im.protocol.request.*;
 import com.ywh.demo.im.protocol.response.*;
 import com.ywh.demo.im.serializer.Serializer;
-import com.ywh.demo.im.serializer.JSONSerializer;
+import com.ywh.demo.im.serializer.JsonSerializer;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
@@ -12,12 +12,15 @@ import java.util.Map;
 import static com.ywh.demo.im.constant.CommandConstant.*;
 
 
+/**
+ * @author ywh
+ */
 public class PacketCodec {
 
     public static final int MAGIC_NUMBER = 0x12345678;
     public static final PacketCodec INSTANCE = new PacketCodec();
 
-    private final Map<Byte, Class<? extends Packet>> packetTypeMap;
+    private final Map<Byte, Class<? extends BasePacket>> packetTypeMap;
     private final Map<Byte, Serializer> serializerMap;
 
 
@@ -41,11 +44,11 @@ public class PacketCodec {
         packetTypeMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponsePacket.class);
 
         serializerMap = new HashMap<>();
-        Serializer serializer = new JSONSerializer();
+        Serializer serializer = new JsonSerializer();
         serializerMap.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
-    public void encode(ByteBuf byteBuf, Packet packet) {
+    public void encode(ByteBuf byteBuf, BasePacket packet) {
         // 1. 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
@@ -59,7 +62,7 @@ public class PacketCodec {
     }
 
 
-    public Packet decode(ByteBuf byteBuf) {
+    public BasePacket decode(ByteBuf byteBuf) {
         // 跳过 magic number
         byteBuf.skipBytes(4);
 
@@ -78,7 +81,7 @@ public class PacketCodec {
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
 
-        Class<? extends Packet> requestType = getRequestType(command);
+        Class<? extends BasePacket> requestType = getRequestType(command);
         Serializer serializer = getSerializer(serializeAlgorithm);
 
         if (requestType != null && serializer != null) {
@@ -93,7 +96,7 @@ public class PacketCodec {
         return serializerMap.get(serializeAlgorithm);
     }
 
-    private Class<? extends Packet> getRequestType(byte command) {
+    private Class<? extends BasePacket> getRequestType(byte command) {
 
         return packetTypeMap.get(command);
     }

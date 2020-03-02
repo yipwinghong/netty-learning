@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.response;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +15,7 @@ import static com.ywh.demo.im.constant.CommandConstant.CREATE_GROUP_RESPONSE;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class CreateGroupResponsePacket extends Packet {
+public class CreateGroupResponsePacket extends BasePacket {
     private boolean success;
 
     private String groupName;

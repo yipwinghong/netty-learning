@@ -1,6 +1,6 @@
 package com.ywh.demo.im.server.handler;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -16,11 +16,11 @@ import static com.ywh.demo.im.constant.CommandConstant.*;
  * @author ywh
  */
 @ChannelHandler.Sharable
-public class ImHandler extends SimpleChannelInboundHandler<Packet> {
+public class ImHandler extends SimpleChannelInboundHandler<BasePacket> {
 
     public static final ImHandler INSTANCE = new ImHandler();
 
-    private Map<Byte, SimpleChannelInboundHandler<? extends Packet>> handlerMap;
+    private Map<Byte, SimpleChannelInboundHandler<? extends BasePacket>> handlerMap;
 
     private ImHandler() {
         handlerMap = new HashMap<>();
@@ -48,7 +48,7 @@ public class ImHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, BasePacket packet) throws Exception {
         handlerMap.get(packet.getCommand()).channelRead(ctx, packet);
     }
 }

@@ -11,5 +11,11 @@ import java.util.Scanner;
  * @since 24/12/2019
  */
 public interface ConsoleCommand {
+    /**
+     * 执行命令
+     *
+     * @param scanner
+     * @param channel
+     */
     void exec(Scanner scanner, Channel channel);
 }

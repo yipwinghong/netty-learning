@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.request;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import static com.ywh.demo.im.constant.CommandConstant.JOIN_GROUP_REQUEST;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class JoinGroupRequestPacket extends Packet {
+public class JoinGroupRequestPacket extends BasePacket {
 
     private String groupName;
 

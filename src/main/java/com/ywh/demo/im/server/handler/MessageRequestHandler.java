@@ -31,7 +31,7 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
         MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
         messageResponsePacket.setFromUserName(session.getUserName());
         messageResponsePacket.setMessage(messageRequestPacket.getMessage());
-        // messageResponsePacket.setMessage("服务端已接收到消息 [" + messageRequestPacket.getMessage() + "]");
+         messageResponsePacket.setMessage("服务端已接收到消息 [" + messageRequestPacket.getMessage() + "]");
 
         Channel toUserChannel = SessionUtil.getChannel(messageRequestPacket.getToUserName());
         if (SessionUtil.hasLogin(toUserChannel)) {

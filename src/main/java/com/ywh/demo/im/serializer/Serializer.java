@@ -8,7 +8,7 @@ package com.ywh.demo.im.serializer;
  */
 public interface Serializer {
 
-    Serializer DEFAULT = new JSONSerializer();
+    Serializer DEFAULT = new JsonSerializer();
 
     /**
      * 序列化算法

@@ -1,4 +1,4 @@
-package com.ywh.demo.netty;
+package com.ywh.io.nio.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

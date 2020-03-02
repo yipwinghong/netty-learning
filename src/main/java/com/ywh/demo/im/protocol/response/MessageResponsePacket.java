@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.response;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import static com.ywh.demo.im.constant.CommandConstant.MESSAGE_RESPONSE;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageResponsePacket extends Packet {
+public class MessageResponsePacket extends BasePacket {
 
     private String fromUserName;
 

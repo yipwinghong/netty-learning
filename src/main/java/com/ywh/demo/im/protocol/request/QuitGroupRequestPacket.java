@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.request;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import static com.ywh.demo.im.constant.CommandConstant.QUIT_GROUP_REQUEST;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class QuitGroupRequestPacket extends Packet {
+public class QuitGroupRequestPacket extends BasePacket {
 
     private String groupName;
 

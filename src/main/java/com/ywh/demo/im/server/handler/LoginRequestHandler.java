@@ -30,7 +30,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
             loginResponsePacket.setSuccess(true);
             System.out.println(new Date() + ": 用户 ["+ loginRequestPacket.getUserName() +"] 登录成功！");
             SessionUtil.bindSession(new Session(loginRequestPacket.getUserName()), ctx.channel());
-            // LoginUtil.markAsLogin(ctx.channel());
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
             loginResponsePacket.setSuccess(false);

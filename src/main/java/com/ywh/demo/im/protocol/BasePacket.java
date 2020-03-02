@@ -8,7 +8,7 @@ import lombok.Data;
  * @author ywh
  */
 @Data
-public abstract class Packet {
+public abstract class BasePacket {
 
     /**
      * 版本

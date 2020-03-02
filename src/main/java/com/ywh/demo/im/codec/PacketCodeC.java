@@ -1,12 +1,12 @@
 package com.ywh.demo.im.codec;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import com.ywh.demo.im.protocol.request.LoginRequestPacket;
 import com.ywh.demo.im.protocol.request.MessageRequestPacket;
 import com.ywh.demo.im.protocol.response.LoginResponsePacket;
 import com.ywh.demo.im.protocol.response.MessageResponsePacket;
 import com.ywh.demo.im.serializer.Serializer;
-import com.ywh.demo.im.serializer.JSONSerializer;
+import com.ywh.demo.im.serializer.JsonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -31,7 +31,7 @@ import static com.ywh.demo.im.constant.CommandConstant.*;
  */
 public class PacketCodeC {
 
-    private static final Map<Byte, Class<? extends Packet>> PACKET_TYPE_MAP;
+    private static final Map<Byte, Class<? extends BasePacket>> PACKET_TYPE_MAP;
 
     private static final Map<Byte, Serializer> SERIALIZER_MAP;
 
@@ -43,7 +43,7 @@ public class PacketCodeC {
         PACKET_TYPE_MAP.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         SERIALIZER_MAP = new HashMap<>();
-        Serializer serializer = new JSONSerializer();
+        Serializer serializer = new JsonSerializer();
         SERIALIZER_MAP.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
@@ -53,18 +53,18 @@ public class PacketCodeC {
      * @param packet
      * @return
      */
-    public static ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
+    public static ByteBuf encode(ByteBufAllocator byteBufAllocator, BasePacket packet) {
         ByteBuf byteBuf = byteBufAllocator.buffer();
         return encode(byteBuf, packet);
     }
 
-    public static ByteBuf encode(Packet packet) {
+    public static ByteBuf encode(BasePacket packet) {
         // 创建 ByteBuf 对象（创建一个直接内存，不受 JVM 堆管理，写到 IO 缓冲区效率更高）
         ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         return encode(byteBuf, packet);
     }
 
-    public static ByteBuf encode(ByteBuf byteBuf, Packet packet) {
+    public static ByteBuf encode(ByteBuf byteBuf, BasePacket packet) {
         // 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
@@ -85,7 +85,7 @@ public class PacketCodeC {
      * @param byteBuf
      * @return
      */
-    public static Packet decode(ByteBuf byteBuf) {
+    public static BasePacket decode(ByteBuf byteBuf) {
         // 跳过魔数和版本号，版本号
         byteBuf.skipBytes(4 + 1);
 
@@ -98,7 +98,7 @@ public class PacketCodeC {
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
 
-        Class<? extends Packet> requestType = PACKET_TYPE_MAP.get(command);
+        Class<? extends BasePacket> requestType = PACKET_TYPE_MAP.get(command);
         Serializer serializer = SERIALIZER_MAP.get(serializeAlgorithm);
 
         if (requestType != null && serializer != null) {

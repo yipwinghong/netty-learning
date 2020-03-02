@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.response;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import static com.ywh.demo.im.constant.CommandConstant.LOGIN_RESPONSE;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LoginResponsePacket extends Packet {
+public class LoginResponsePacket extends BasePacket {
 
     private String userName;
 

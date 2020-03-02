@@ -39,9 +39,8 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
 
         // 登录成功，标记登录状态
         if (loginResponsePacket.getSuccess()) {
-            // LoginUtil.markAsLogin(ctx.channel());
             SessionUtil.bindSession(new Session(loginResponsePacket.getUserName()), ctx.channel());
-            // System.out.println(new Date() + ": 客户端登录成功！");
+             System.out.println(new Date() + ": 客户端登录成功！");
         } else {
             System.out.println(new Date() + ": 客户端登录失败！原因：" + loginResponsePacket.getReason());
         }

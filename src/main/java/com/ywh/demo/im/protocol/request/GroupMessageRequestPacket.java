@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.request;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import static com.ywh.demo.im.constant.CommandConstant.GROUP_MESSAGE_REQUEST;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class GroupMessageRequestPacket extends Packet {
+public class GroupMessageRequestPacket extends BasePacket {
     private String toGroupId;
     private String message;
 

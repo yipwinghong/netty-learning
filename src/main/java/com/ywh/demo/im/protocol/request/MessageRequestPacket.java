@@ -1,6 +1,6 @@
 package com.ywh.demo.im.protocol.request;
 
-import com.ywh.demo.im.protocol.Packet;
+import com.ywh.demo.im.protocol.BasePacket;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import static com.ywh.demo.im.constant.CommandConstant.MESSAGE_REQUEST;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageRequestPacket extends Packet {
+public class MessageRequestPacket extends BasePacket {
 
     private String toUserName;
 

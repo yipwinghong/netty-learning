@@ -1,4 +1,4 @@
-package com.ywh.demo.netty;
+package com.ywh.io.nio.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
