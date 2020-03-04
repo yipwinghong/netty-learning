@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * 消息注册
+ *
  * @author ywh
  */
 public class MessageRegistry {
