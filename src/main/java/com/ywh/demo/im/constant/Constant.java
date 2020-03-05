@@ -5,8 +5,9 @@ package com.ywh.demo.im.constant;
  *
  * @author ywh
  */
-public interface CommandConstant {
+public interface Constant {
 
+    // ---
     Byte LOGIN_REQUEST = 1;
 
     Byte LOGIN_RESPONSE = 2;
@@ -45,9 +46,23 @@ public interface CommandConstant {
 
     Integer MAGIC_NUMBER = 0x12345678;
 
+    Integer CLIENT_CONNECT_MAX_RETRY = 5;
+
     Integer LENGTH_FIELD_OFFSET = 7;
 
     Integer LENGTH_FIELD_LENGTH = 4;
 
     Integer HEARTBEAT_INTERVAL = 5;
+
+    String CMD_SEND_TO_USER = "sendToUser";
+
+    String CMD_LOGOUT = "logout";
+
+    String CMD_CREATE_GROUP = "createGroup";
+
+    String CMD_JOIN_GROUP = "joinGroup";
+
+    String CMD_QUIT_GROUP = "quitGroup";
+
+    String CMD_LIST_GROUP_MEMBERS = "listGroupMembers";
 }

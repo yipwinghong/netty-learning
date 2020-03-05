@@ -23,7 +23,7 @@ public class MessageCollector extends ChannelInboundHandlerAdapter {
 
 	private Throwable connectionClosed = new Exception("rpc connection not active error");
 
-	public MessageCollector(MessageRegistry registry, RpcClient client) {
+	MessageCollector(MessageRegistry registry, RpcClient client) {
 		this.registry = registry;
 		this.client = client;
 	}
@@ -42,7 +42,7 @@ public class MessageCollector extends ChannelInboundHandlerAdapter {
 		ctx.channel().eventLoop().schedule(() -> client.reconnect(), 1, TimeUnit.SECONDS);
 	}
 
-	public <T> RpcFuture<T> send(MessageOutput output) {
+	<T> RpcFuture<T> send(MessageOutput output) {
 		ChannelHandlerContext ctx = context;
 		RpcFuture<T> future = new RpcFuture<>();
 		if (ctx != null) {
@@ -83,7 +83,7 @@ public class MessageCollector extends ChannelInboundHandlerAdapter {
 
 	}
 
-	public void close() {
+	void close() {
 		ChannelHandlerContext ctx = context;
 		if (ctx != null) {
 			ctx.close();

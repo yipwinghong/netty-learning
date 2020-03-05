@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-import static com.ywh.demo.im.constant.CommandConstant.LIST_GROUP_MEMBERS_RESPONSE;
+import static com.ywh.demo.im.constant.Constant.LIST_GROUP_MEMBERS_RESPONSE;
 
 /**
  * 查看群组成员响应协议包

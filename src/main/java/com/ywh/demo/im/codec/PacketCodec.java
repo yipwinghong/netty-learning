@@ -1,23 +1,35 @@
-package com.ywh.demo.im.protocol;
+package com.ywh.demo.im.codec;
 
+import com.ywh.demo.im.protocol.BasePacket;
 import com.ywh.demo.im.protocol.request.*;
 import com.ywh.demo.im.protocol.response.*;
 import com.ywh.demo.im.serializer.Serializer;
 import com.ywh.demo.im.serializer.JsonSerializer;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ywh.demo.im.constant.CommandConstant.*;
+import static com.ywh.demo.im.constant.Constant.*;
 
 
 /**
+ * 编解码器：
+ * 通讯协议由六部分组成：
+ * 1. 魔数：4bytes，用于限制解析指定的数据包协议
+ * 2. 版本号：1bytes，预留字段，用于协议升级（类似 IPV4 和 IPV6）
+ * 3. 序列化算法：1bytes
+ * 4. 指令：1bytes
+ * 5. 数据长度：4bytes，便于拆包：使用 {@link LengthFieldBasedFrameDecoder}（基于长度域拆包器），长度域相对整个数据包的偏移量为 4 + 1 + 1 + 1 == 7
+ * 6. 数据：Nbytes
+ *
+ *
  * @author ywh
  */
 public class PacketCodec {
 
-    public static final int MAGIC_NUMBER = 0x12345678;
     public static final PacketCodec INSTANCE = new PacketCodec();
 
     private final Map<Byte, Class<? extends BasePacket>> packetTypeMap;
@@ -42,17 +54,26 @@ public class PacketCodec {
         packetTypeMap.put(LIST_GROUP_MEMBERS_RESPONSE, ListGroupMembersResponsePacket.class);
         packetTypeMap.put(GROUP_MESSAGE_REQUEST, GroupMessageRequestPacket.class);
         packetTypeMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponsePacket.class);
+        packetTypeMap.put(HEARTBEAT_REQUEST, HeartBeatRequestPacket.class);
+        packetTypeMap.put(HEARTBEAT_RESPONSE, HeartBeatResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new JsonSerializer();
         serializerMap.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
+    public ByteBuf encode(BasePacket packet) {
+        // 创建 ByteBuf 对象（创建一个直接内存，不受 JVM 堆管理，写到 IO 缓冲区效率更高）
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+        encode(byteBuf, packet);
+        return byteBuf;
+    }
+
     public void encode(ByteBuf byteBuf, BasePacket packet) {
-        // 1. 序列化 java 对象
+        // 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
-        // 2. 实际编码过程
+        // 编码
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());

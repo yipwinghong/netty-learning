@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-import static com.ywh.demo.im.constant.CommandConstant.CREATE_GROUP_REQUEST;
+import static com.ywh.demo.im.constant.Constant.CREATE_GROUP_REQUEST;
 
 /**
  * 创建群组请求协议包

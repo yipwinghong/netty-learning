@@ -21,18 +21,18 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
 
     public static final LoginResponseHandler INSTANCE = new LoginResponseHandler();
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        System.out.println(new Date() + ": 客户端登录中...");
-
-        // 创建登录对象
-        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-        loginRequestPacket.setUserName("ywh");
-        loginRequestPacket.setPassword("pwd");
-
-        // 编码，写入数据
-        ctx.writeAndFlush(loginRequestPacket);
-    }
+//    @Override
+//    public void channelActive(ChannelHandlerContext ctx) {
+//        System.out.println(new Date() + ": 客户端登录中...");
+//
+//        // 创建登录对象
+//        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+//        loginRequestPacket.setUserName("ywh");
+//        loginRequestPacket.setPassword("pwd");
+//
+//        // 编码，写入数据
+//        ctx.writeAndFlush(loginRequestPacket);
+//    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket loginResponsePacket) {

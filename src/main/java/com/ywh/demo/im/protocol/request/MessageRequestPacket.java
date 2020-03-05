@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import static com.ywh.demo.im.constant.CommandConstant.MESSAGE_REQUEST;
+import static com.ywh.demo.im.constant.Constant.MESSAGE_REQUEST;
 
 /**
  * 消息请求协议包
@@ -26,9 +26,5 @@ public class MessageRequestPacket extends BasePacket {
     @Override
     public Byte getCommand() {
         return MESSAGE_REQUEST;
-    }
-
-    public MessageRequestPacket(String message) {
-        this.message = message;
     }
 }

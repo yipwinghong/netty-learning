@@ -3,10 +3,9 @@ package com.ywh.demo.im.client;
 import com.ywh.demo.im.client.console.ConsoleCommandManager;
 import com.ywh.demo.im.client.console.LoginConsoleCommand;
 import com.ywh.demo.im.client.handler.*;
-import com.ywh.demo.im.codec.PacketDecoder;
-import com.ywh.demo.im.codec.PacketEncoder;
 import com.ywh.demo.im.codec.Splitter;
 import com.ywh.demo.im.handler.ImIdleStateHandler;
+import com.ywh.demo.im.handler.PacketCodecHandler;
 import com.ywh.demo.im.util.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -22,6 +21,8 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import static com.ywh.demo.im.constant.Constant.CLIENT_CONNECT_MAX_RETRY;
+
 /**
  * 客户端启动流程
  *
@@ -30,55 +31,60 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
-    private static int MAX_RETRY = 5;
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap
-            // 指定线程模型，IO 类型为 NIO
-            .group(new NioEventLoopGroup())
-            .channel(NioSocketChannel.class)
-            .handler(new ChannelInitializer<SocketChannel>() {
+        NioEventLoopGroup group = new NioEventLoopGroup();
+        try {
+            bootstrap
+                // 指定线程模型，IO 类型为 NIO
+                .group(group)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
 
-                /**
-                 * 指定连接数据读写逻辑（责任链模式）
-                 *
-                 * @param ch
-                 */
-                @Override
-                protected void initChannel(SocketChannel ch) {
-                    ch.pipeline().addLast(new ImIdleStateHandler());
-                    ch.pipeline().addLast(new Splitter());
+                    /**
+                     * 指定连接数据读写逻辑（责任链模式）
+                     *
+                     * @param ch
+                     */
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ch.pipeline().addLast(new ImIdleStateHandler());
+                        ch.pipeline().addLast(new Splitter());
 
-                    ch.pipeline().addLast(new PacketDecoder());
+//                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
 
-                    // 登录响应处理器
-                    ch.pipeline().addLast(new LoginResponseHandler());
-                    // 收消息处理器
-                    ch.pipeline().addLast(new MessageResponseHandler());
-                    // 创建群响应处理器
-                    ch.pipeline().addLast(new CreateGroupResponseHandler());
-                    // 加群响应处理器
-                    ch.pipeline().addLast(new JoinGroupResponseHandler());
-                    // 退群响应处理器
-                    ch.pipeline().addLast(new QuitGroupResponseHandler());
-                    // 获取群成员响应处理器
-                    ch.pipeline().addLast(new ListGroupMembersResponseHandler());
-                    // 登出响应处理器
-                    ch.pipeline().addLast(new LogoutResponseHandler());
-                    ch.pipeline().addLast(new PacketEncoder());
+                        // 登录响应处理器
+                        ch.pipeline().addLast(new LoginResponseHandler());
+                        // 收消息处理器
+                        ch.pipeline().addLast(new MessageResponseHandler());
+                        // 创建群响应处理器
+                        ch.pipeline().addLast(new CreateGroupResponseHandler());
+                        // 加群响应处理器
+                        ch.pipeline().addLast(new JoinGroupResponseHandler());
+                        // 退群响应处理器
+                        ch.pipeline().addLast(new QuitGroupResponseHandler());
+                        // 获取群成员响应处理器
+                        ch.pipeline().addLast(new ListGroupMembersResponseHandler());
+                        // 登出响应处理器
+                        ch.pipeline().addLast(new LogoutResponseHandler());
+//                        ch.pipeline().addLast(new PacketEncoder());
 
-                    ch.pipeline().addLast(new HeartBeatTimerHandler());
-                }
-            })
-            .attr(AttributeKey.newInstance("clientName"), "nettyClient")
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-            .option(ChannelOption.SO_KEEPALIVE, true)
-            .option(ChannelOption.TCP_NODELAY, true)
-        ;
-        // 建立连接
-        connect(bootstrap, "localhost", 1000, MAX_RETRY);
+                        ch.pipeline().addLast(new HeartBeatTimerHandler());
+                    }
+                })
+                .attr(AttributeKey.newInstance("clientName"), "nettyClient")
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+            ;
+            // 建立连接
+            connect(bootstrap, "localhost", 1000, CLIENT_CONNECT_MAX_RETRY);
+        } catch (Exception ex){
+            group.shutdownGracefully().sync();
+        }
+
     }
 
     /**
@@ -92,7 +98,8 @@ public class NettyClient {
      * @param port
      */
     private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
-        bootstrap.connect(host, port).addListener(future -> {
+        bootstrap.connect(host, port)
+            .addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("连接成功!");
                 Channel channel = ((ChannelFuture) future).channel();
@@ -101,7 +108,7 @@ public class NettyClient {
                 System.err.println("重试结束！");
             } else {
                 // 第几次重连
-                int order = (MAX_RETRY - retry) + 1;
+                int order = (CLIENT_CONNECT_MAX_RETRY - retry) + 1;
 
                 // 本次重连的间隔：指数退避策略
                 int delay = 1 << order;

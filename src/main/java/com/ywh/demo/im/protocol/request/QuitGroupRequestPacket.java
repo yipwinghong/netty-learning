@@ -4,7 +4,7 @@ import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.ywh.demo.im.constant.CommandConstant.QUIT_GROUP_REQUEST;
+import static com.ywh.demo.im.constant.Constant.QUIT_GROUP_REQUEST;
 
 /**
  * 退出群组请求协议包

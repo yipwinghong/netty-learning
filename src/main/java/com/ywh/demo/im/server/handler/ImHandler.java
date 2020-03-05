@@ -8,7 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ywh.demo.im.constant.CommandConstant.*;
+import static com.ywh.demo.im.constant.Constant.*;
 
 /**
  * 压缩 Handler（只取出指定命令对应的 Handler，不需要经过其他）

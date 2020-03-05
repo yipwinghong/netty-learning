@@ -13,6 +13,6 @@ public class PacketEncoder extends MessageToByteEncoder<BasePacket> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, BasePacket packet, ByteBuf out) {
-        PacketCodeC.encode(out, packet);
+        PacketCodec.INSTANCE.encode(out, packet);
     }
 }

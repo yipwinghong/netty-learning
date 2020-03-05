@@ -20,7 +20,7 @@ public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageR
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket messageResponsePacket) {
-         System.out.println(new Date() + ": 接收到服务端的消息: " + messageResponsePacket.getMessage());
+//        System.out.println(new Date() + ": 接收到服务端的消息: " + messageResponsePacket.getMessage());
         System.out.println(messageResponsePacket.getFromUserName() + "：" + messageResponsePacket.getMessage());
     }
 }

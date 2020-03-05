@@ -5,7 +5,7 @@ import com.ywh.demo.im.session.Session;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.ywh.demo.im.constant.CommandConstant.GROUP_MESSAGE_RESPONSE;
+import static com.ywh.demo.im.constant.Constant.GROUP_MESSAGE_RESPONSE;
 
 /**
  * @author ywh

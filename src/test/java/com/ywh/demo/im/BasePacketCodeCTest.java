@@ -1,7 +1,7 @@
 package com.ywh.demo.im;
 
-import com.ywh.demo.im.codec.PacketCodeC;
 import com.ywh.demo.im.protocol.BasePacket;
+import com.ywh.demo.im.codec.PacketCodec;
 import com.ywh.demo.im.protocol.request.LoginRequestPacket;
 import com.ywh.demo.im.serializer.Serializer;
 import com.ywh.demo.im.serializer.JsonSerializer;
@@ -25,8 +25,9 @@ public class BasePacketCodeCTest {
         loginRequestPacket.setVersion(((byte) 1));
         loginRequestPacket.setUserName("ywh");
         loginRequestPacket.setPassword("123456");
-        ByteBuf byteBuf = PacketCodeC.encode(loginRequestPacket);
-        BasePacket decodedPacket = PacketCodeC.decode(byteBuf);
+
+        ByteBuf byteBuf = PacketCodec.INSTANCE.encode(loginRequestPacket);
+        BasePacket decodedPacket = PacketCodec.INSTANCE.decode(byteBuf);
         Assert.assertArrayEquals(serializer.serialize(loginRequestPacket), serializer.serialize(decodedPacket));
 
     }

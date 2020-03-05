@@ -4,7 +4,7 @@ import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.ywh.demo.im.constant.CommandConstant.JOIN_GROUP_REQUEST;
+import static com.ywh.demo.im.constant.Constant.JOIN_GROUP_REQUEST;
 
 /**
  * 加入群组请求协议包

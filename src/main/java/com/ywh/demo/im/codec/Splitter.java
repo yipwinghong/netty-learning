@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
-import static com.ywh.demo.im.constant.CommandConstant.*;
+import static com.ywh.demo.im.constant.Constant.*;
 
 /**
  * 自定义拆包器，基于长度域拆包器上扩展，添加拒绝非本协议连接的逻辑（根据魔数）

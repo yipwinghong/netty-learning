@@ -6,7 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.ywh.demo.im.constant.CommandConstant.HEARTBEAT_INTERVAL;
+import static com.ywh.demo.im.constant.Constant.HEARTBEAT_INTERVAL;
 
 /**
  * 客户端心跳响应处理器
@@ -23,12 +23,9 @@ public class HeartBeatTimerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void scheduleSendHeartBeat(ChannelHandlerContext ctx) {
-        System.out.println("向服务端发送心跳包...");
         // 返回当前 channel 绑定的 NIO 线程
         ctx.executor().schedule(() -> {
-
             if (ctx.channel().isActive()) {
-
                 ctx.writeAndFlush(new HeartBeatRequestPacket());
                 scheduleSendHeartBeat(ctx);
             }

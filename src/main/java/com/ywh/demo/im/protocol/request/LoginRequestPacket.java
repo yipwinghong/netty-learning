@@ -4,7 +4,7 @@ import com.ywh.demo.im.protocol.BasePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import static com.ywh.demo.im.constant.CommandConstant.LOGIN_REQUEST;
+import static com.ywh.demo.im.constant.Constant.LOGIN_REQUEST;
 
 /**
  * 登录请求协议包

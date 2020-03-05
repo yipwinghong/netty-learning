@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-import static com.ywh.demo.im.constant.CommandConstant.CREATE_GROUP_RESPONSE;
+import static com.ywh.demo.im.constant.Constant.CREATE_GROUP_RESPONSE;
 
 /**
  * 创建群组响应协议包

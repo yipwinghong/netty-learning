@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import static com.ywh.demo.im.constant.CommandConstant.MESSAGE_RESPONSE;
+import static com.ywh.demo.im.constant.Constant.MESSAGE_RESPONSE;
 
 /**
  * 消息响应协议包
