@@ -19,7 +19,7 @@ import io.netty.util.AttributeKey;
 
 import java.util.Date;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static com.ywh.demo.im.constant.Constant.CLIENT_CONNECT_MAX_RETRY;
 
@@ -30,6 +30,12 @@ import static com.ywh.demo.im.constant.Constant.CLIENT_CONNECT_MAX_RETRY;
  * @since 24/12/2019
  */
 public class NettyClient {
+
+    private static ExecutorService executorService;
+
+    static {
+        executorService = new ThreadPoolExecutor(2, 2, 4000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(10));
+    }
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -81,7 +87,7 @@ public class NettyClient {
             ;
             // 建立连接
             connect(bootstrap, "localhost", 1000, CLIENT_CONNECT_MAX_RETRY);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             group.shutdownGracefully().sync();
         }
 
@@ -100,23 +106,23 @@ public class NettyClient {
     private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
         bootstrap.connect(host, port)
             .addListener(future -> {
-            if (future.isSuccess()) {
-                System.out.println("连接成功!");
-                Channel channel = ((ChannelFuture) future).channel();
-                startConsoleThread(channel);
-            } else if (retry == 0) {
-                System.err.println("重试结束！");
-            } else {
-                // 第几次重连
-                int order = (CLIENT_CONNECT_MAX_RETRY - retry) + 1;
+                if (future.isSuccess()) {
+                    System.out.println("连接成功!");
+                    Channel channel = ((ChannelFuture) future).channel();
+                    startConsoleThread(channel);
+                } else if (retry == 0) {
+                    System.err.println("重试结束！");
+                } else {
+                    // 第几次重连
+                    int order = (CLIENT_CONNECT_MAX_RETRY - retry) + 1;
 
-                // 本次重连的间隔：指数退避策略
-                int delay = 1 << order;
-                System.err.println(new Date() + ": 连接失败，执行第 " + order + " 次重连...");
-                bootstrap.config().group().schedule(
-                    () -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
-            }
-        });
+                    // 本次重连的间隔：指数退避策略
+                    int delay = 1 << order;
+                    System.err.println(new Date() + ": 连接失败，执行第 " + order + " 次重连...");
+                    bootstrap.config().group().schedule(
+                        () -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
+                }
+            });
     }
 
     /**
@@ -126,19 +132,24 @@ public class NettyClient {
      */
     private static void startConsoleThread(Channel channel) {
         Scanner sc = new Scanner(System.in);
-
         ConsoleCommandManager consoleCommandManager = new ConsoleCommandManager();
         LoginConsoleCommand loginConsoleCommand = new LoginConsoleCommand();
 
-        new Thread(() -> {
-            // 从控制台获取消息之后，将消息封装成消息对象、编码成 ByteBuf，将消息写到服务端
-            while (!Thread.interrupted()) {
-                if (!SessionUtil.hasLogin(channel)) {
-                    loginConsoleCommand.exec(sc, channel);
-                } else {
-                    consoleCommandManager.exec(sc, channel);
+        executorService.execute(
+            () -> {
+                // 从控制台获取消息之后，将消息封装成消息对象、编码成 ByteBuf，将消息写到服务端
+                while (!Thread.interrupted()) {
+                    if (!SessionUtil.hasLogin(channel)) {
+                        loginConsoleCommand.exec(sc, channel);
+                    } else {
+                        consoleCommandManager.exec(sc, channel);
+                    }
                 }
             }
-        }).start();
+        );
+
+//        new Thread(() -> {
+//
+//        }).start();
     }
 }
