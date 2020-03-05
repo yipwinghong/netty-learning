@@ -3,7 +3,7 @@ package com.ywh.demo.im.server.handler;
 import com.ywh.demo.im.protocol.request.ListGroupMembersRequestPacket;
 import com.ywh.demo.im.protocol.response.ListGroupMembersResponsePacket;
 import com.ywh.demo.im.session.Session;
-import com.ywh.demo.im.util.SessionUtil;
+import com.ywh.demo.im.session.SessionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

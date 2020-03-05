@@ -1,4 +1,4 @@
-package com.ywh.demo.im.serializer;
+package com.ywh.demo.im.protocol.serializer;
 
 /**
  * 序列化器算法

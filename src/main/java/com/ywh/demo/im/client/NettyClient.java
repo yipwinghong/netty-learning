@@ -3,10 +3,10 @@ package com.ywh.demo.im.client;
 import com.ywh.demo.im.client.console.ConsoleCommandManager;
 import com.ywh.demo.im.client.console.LoginConsoleCommand;
 import com.ywh.demo.im.client.handler.*;
-import com.ywh.demo.im.codec.Splitter;
+import com.ywh.demo.im.handler.SplitterHandler;
 import com.ywh.demo.im.handler.ImIdleStateHandler;
 import com.ywh.demo.im.handler.PacketCodecHandler;
-import com.ywh.demo.im.util.SessionUtil;
+import com.ywh.demo.im.session.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-import static com.ywh.demo.im.constant.Constant.CLIENT_CONNECT_MAX_RETRY;
-
 /**
  * 客户端启动流程
  *
@@ -31,10 +29,12 @@ import static com.ywh.demo.im.constant.Constant.CLIENT_CONNECT_MAX_RETRY;
  */
 public class NettyClient {
 
+    private static final Integer CLIENT_CONNECT_MAX_RETRY = 5;
+
     private static ExecutorService executorService;
 
     static {
-        executorService = new ThreadPoolExecutor(2, 2, 4000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(10));
+        executorService = Executors.newCachedThreadPool();
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -56,9 +56,8 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel ch) {
                         ch.pipeline().addLast(new ImIdleStateHandler());
-                        ch.pipeline().addLast(new Splitter());
+                        ch.pipeline().addLast(new SplitterHandler());
 
-//                        ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
 
                         // 登录响应处理器
@@ -75,7 +74,6 @@ public class NettyClient {
                         ch.pipeline().addLast(new ListGroupMembersResponseHandler());
                         // 登出响应处理器
                         ch.pipeline().addLast(new LogoutResponseHandler());
-//                        ch.pipeline().addLast(new PacketEncoder());
 
                         ch.pipeline().addLast(new HeartBeatTimerHandler());
                     }

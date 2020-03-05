@@ -6,8 +6,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.ywh.demo.im.constant.Constant.HEARTBEAT_INTERVAL;
-
 /**
  * 客户端心跳响应处理器
  *
@@ -15,6 +13,8 @@ import static com.ywh.demo.im.constant.Constant.HEARTBEAT_INTERVAL;
  * @since 29/02/2020
  */
 public class HeartBeatTimerHandler extends ChannelInboundHandlerAdapter {
+
+    private static final Integer HEARTBEAT_INTERVAL = 5;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

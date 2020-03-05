@@ -1,7 +1,7 @@
 package com.ywh.demo.im.handler;
 
 import com.ywh.demo.im.protocol.BasePacket;
-import com.ywh.demo.im.codec.PacketCodec;
+import com.ywh.demo.im.protocol.PacketCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

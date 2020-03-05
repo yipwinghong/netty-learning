@@ -1,6 +1,6 @@
 package com.ywh.demo.im.client.console;
 
-import com.ywh.demo.im.util.SessionUtil;
+import com.ywh.demo.im.session.SessionUtil;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;
@@ -16,6 +16,19 @@ import static com.ywh.demo.im.constant.Constant.*;
  * @since 24/12/2019
  */
 public class ConsoleCommandManager implements ConsoleCommand {
+
+    private static final String CMD_SEND_TO_USER = "sendToUser";
+
+    private static final String CMD_LOGOUT = "logout";
+
+    private static final String CMD_CREATE_GROUP = "createGroup";
+
+    private static final String CMD_JOIN_GROUP = "joinGroup";
+
+    private static final String CMD_QUIT_GROUP = "quitGroup";
+
+    private static final String CMD_LIST_GROUP_MEMBERS = "listGroupMembers";
+
     private Map<String, ConsoleCommand> consoleCommandMap;
 
     public ConsoleCommandManager() {

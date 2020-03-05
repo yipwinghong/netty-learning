@@ -1,4 +1,4 @@
-package com.ywh.demo.im.util;
+package com.ywh.demo.im.session;
 
 import com.ywh.demo.im.protocol.Attributes;
 import com.ywh.demo.im.session.Session;

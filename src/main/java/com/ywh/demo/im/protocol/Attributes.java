@@ -8,6 +8,5 @@ import io.netty.util.AttributeKey;
  * @author ywh
  */
 public interface Attributes {
-
     AttributeKey<Session> SESSION = AttributeKey.newInstance("session");
 }

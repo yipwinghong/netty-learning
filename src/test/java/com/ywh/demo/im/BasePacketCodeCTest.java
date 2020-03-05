@@ -1,10 +1,10 @@
 package com.ywh.demo.im;
 
 import com.ywh.demo.im.protocol.BasePacket;
-import com.ywh.demo.im.codec.PacketCodec;
+import com.ywh.demo.im.protocol.PacketCodec;
 import com.ywh.demo.im.protocol.request.LoginRequestPacket;
-import com.ywh.demo.im.serializer.Serializer;
-import com.ywh.demo.im.serializer.JsonSerializer;
+import com.ywh.demo.im.protocol.serializer.Serializer;
+import com.ywh.demo.im.protocol.serializer.JsonSerializer;
 import io.netty.buffer.ByteBuf;
 import org.junit.Assert;
 import org.junit.Test;

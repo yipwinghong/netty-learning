@@ -2,7 +2,7 @@ package com.ywh.demo.im.server.handler;
 
 import com.ywh.demo.im.protocol.request.CreateGroupRequestPacket;
 import com.ywh.demo.im.protocol.response.CreateGroupResponsePacket;
-import com.ywh.demo.im.util.SessionUtil;
+import com.ywh.demo.im.session.SessionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

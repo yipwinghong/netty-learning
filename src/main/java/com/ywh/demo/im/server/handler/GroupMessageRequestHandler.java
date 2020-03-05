@@ -2,7 +2,7 @@ package com.ywh.demo.im.server.handler;
 
 import com.ywh.demo.im.protocol.request.GroupMessageRequestPacket;
 import com.ywh.demo.im.protocol.response.GroupMessageResponsePacket;
-import com.ywh.demo.im.util.SessionUtil;
+import com.ywh.demo.im.session.SessionUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -31,7 +31,6 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
         responsePacket.setFromGroupId(groupId);
         responsePacket.setMessage(requestPacket.getMessage());
         responsePacket.setFromUser(SessionUtil.getSession(ctx.channel()));
-
 
         // 拿到群聊对应的 channelGroup，写到每个客户端
         ChannelGroup channelGroup = SessionUtil.getChannelGroup(groupId);

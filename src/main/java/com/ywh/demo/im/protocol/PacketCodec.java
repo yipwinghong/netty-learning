@@ -1,10 +1,9 @@
-package com.ywh.demo.im.codec;
+package com.ywh.demo.im.protocol;
 
-import com.ywh.demo.im.protocol.BasePacket;
 import com.ywh.demo.im.protocol.request.*;
 import com.ywh.demo.im.protocol.response.*;
-import com.ywh.demo.im.serializer.Serializer;
-import com.ywh.demo.im.serializer.JsonSerializer;
+import com.ywh.demo.im.protocol.serializer.Serializer;
+import com.ywh.demo.im.protocol.serializer.JsonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;

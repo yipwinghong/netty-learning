@@ -1,7 +1,7 @@
 package com.ywh.demo.im.server;
 
 import com.ywh.demo.im.handler.PacketCodecHandler;
-import com.ywh.demo.im.codec.Splitter;
+import com.ywh.demo.im.handler.SplitterHandler;
 import com.ywh.demo.im.handler.ImIdleStateHandler;
 import com.ywh.demo.im.server.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
@@ -62,7 +62,7 @@ public class NettyServer {
 
                         // 空闲检测必须放在最前面，如果插在后面，当这连接读到数据，但是在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判。
                         ch.pipeline().addLast(new ImIdleStateHandler());
-                        ch.pipeline().addLast(new Splitter());
+                        ch.pipeline().addLast(new SplitterHandler());
                         ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
 
                         // 登录请求处理器

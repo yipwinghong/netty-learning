@@ -1,4 +1,4 @@
-package com.ywh.demo.im.codec;
+package com.ywh.demo.im.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,9 +12,13 @@ import static com.ywh.demo.im.constant.Constant.*;
  * @author ywh
  * @since 24/12/2019
  */
-public class Splitter extends LengthFieldBasedFrameDecoder {
+public class SplitterHandler extends LengthFieldBasedFrameDecoder {
 
-    public Splitter() {
+    private static final Integer LENGTH_FIELD_OFFSET = 7;
+
+    private static final Integer LENGTH_FIELD_LENGTH = 4;
+
+    public SplitterHandler() {
         super(Integer.MAX_VALUE, LENGTH_FIELD_OFFSET, LENGTH_FIELD_LENGTH);
     }
 
