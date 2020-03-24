@@ -26,7 +26,7 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
 //
 //        // 创建登录对象
 //        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-//        loginRequestPacket.setUserName("ywh");
+//        loginRequestPacket.setData("ywh");
 //        loginRequestPacket.setPassword("pwd");
 //
 //        // 编码，写入数据

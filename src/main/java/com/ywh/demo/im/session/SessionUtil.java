@@ -63,7 +63,7 @@ public class SessionUtil {
     }
 
     /**
-     * 根据 userName 获取 Channel
+     * 根据 data 获取 Channel
      *
      * @return
      */

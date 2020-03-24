@@ -20,7 +20,7 @@ public class CreateGroupConsoleCommand implements ConsoleCommand {
     public void exec(Scanner scanner, Channel channel) {
         CreateGroupRequestPacket createGroupRequestPacket = new CreateGroupRequestPacket();
 
-        System.out.print("【拉人群聊】输入 userName 列表，userName 之间英文逗号隔开：");
+        System.out.print("【拉人群聊】输入 data 列表，data 之间英文逗号隔开：");
         String userNames = scanner.next();
         createGroupRequestPacket.setUserNameList(Arrays.asList(userNames.split(USER_ID_SPLITER)));
         channel.writeAndFlush(createGroupRequestPacket);
