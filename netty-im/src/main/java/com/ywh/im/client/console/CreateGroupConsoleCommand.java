@@ -1,6 +1,6 @@
 package com.ywh.im.client.console;
 
-import com.ywh.im.protocol.request.CreateGroupRequestPacket;
+import com.ywh.im.common.protocol.request.CreateGroupRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Arrays;

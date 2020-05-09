@@ -1,6 +1,6 @@
 package com.ywh.im.server.handler;
 
-import com.ywh.im.protocol.BasePacket;
+import com.ywh.im.common.protocol.BasePacket;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,7 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ywh.im.constant.Constant.*;
+import static com.ywh.im.common.constant.Constant.*;
 
 /**
  * 压缩 Handler（只取出指定命令对应的 Handler，不需要经过其他）

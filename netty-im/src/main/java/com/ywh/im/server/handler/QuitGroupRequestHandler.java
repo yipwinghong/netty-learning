@@ -1,8 +1,8 @@
 package com.ywh.im.server.handler;
 
-import com.ywh.im.protocol.request.QuitGroupRequestPacket;
-import com.ywh.im.protocol.response.QuitGroupResponsePacket;
-import com.ywh.im.session.SessionUtil;
+import com.ywh.im.common.protocol.request.QuitGroupRequestPacket;
+import com.ywh.im.common.protocol.response.QuitGroupResponsePacket;
+import com.ywh.im.common.session.SessionUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

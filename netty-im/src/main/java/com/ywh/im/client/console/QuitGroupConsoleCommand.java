@@ -1,6 +1,6 @@
 package com.ywh.im.client.console;
 
-import com.ywh.im.protocol.request.QuitGroupRequestPacket;
+import com.ywh.im.common.protocol.request.QuitGroupRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;

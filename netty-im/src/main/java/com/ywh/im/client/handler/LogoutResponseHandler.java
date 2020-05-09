@@ -1,7 +1,7 @@
 package com.ywh.im.client.handler;
 
-import com.ywh.im.protocol.response.LogoutResponsePacket;
-import com.ywh.im.session.SessionUtil;
+import com.ywh.im.common.protocol.response.LogoutResponsePacket;
+import com.ywh.im.common.session.SessionUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

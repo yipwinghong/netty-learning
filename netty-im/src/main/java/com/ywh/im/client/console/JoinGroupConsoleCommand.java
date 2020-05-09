@@ -1,6 +1,6 @@
 package com.ywh.im.client.console;
 
-import com.ywh.im.protocol.request.JoinGroupRequestPacket;
+import com.ywh.im.common.protocol.request.JoinGroupRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;

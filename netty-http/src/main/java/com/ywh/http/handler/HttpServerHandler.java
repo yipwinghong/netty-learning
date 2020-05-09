@@ -46,43 +46,45 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
         response.setCode(200);
         response.setTimestamp(new Date());
 
-        if (msg instanceof HttpRequest) {
-            HttpRequest request = (HttpRequest) msg;
-            headers = request.headers();
-            String uri = request.uri();
-            log.info("http uri: " + uri);
-            if (uri.equals(FAVICON_ICO)) {
-                return;
-            }
-            HttpMethod method = request.method();
-            if (method.equals(HttpMethod.GET)) {
-                QueryStringDecoder queryDecoder = new QueryStringDecoder(uri, Charsets.toCharset(CharEncoding.UTF_8));
-                // 业务逻辑
-                processAttributes(queryDecoder.parameters());
-                response.setMethod("get");
-            } else if (method.equals(HttpMethod.POST)) {
-                //POST请求,由于你需要从消息体中获取数据,因此有必要把msg转换成FullHttpRequest
-                fullRequest = (FullHttpRequest) msg;
-                //根据不同的Content_Type处理body数据
-                processContentType();
-                response.setMethod("post");
+        if (!(msg instanceof HttpRequest )) {
+            return;
+        }
 
-            }
+        HttpRequest request = (HttpRequest) msg;
+        headers = request.headers();
+        String uri = request.uri();
+        log.info("http uri: " + uri);
+        if (uri.equals(FAVICON_ICO)) {
+            return;
+        }
+        HttpMethod method = request.method();
+        if (method.equals(HttpMethod.GET)) {
+            QueryStringDecoder queryDecoder = new QueryStringDecoder(uri, Charsets.toCharset(CharEncoding.UTF_8));
+            // 业务逻辑
+            processAttributes(queryDecoder.parameters());
+            response.setMethod("get");
+        } else if (method.equals(HttpMethod.POST)) {
+            //POST请求,由于你需要从消息体中获取数据,因此有必要把msg转换成FullHttpRequest
+            fullRequest = (FullHttpRequest) msg;
+            //根据不同的Content_Type处理body数据
+            processContentType();
+            response.setMethod("post");
 
-            JSONSerializer jsonSerializer = new JSONSerializer();
-            byte[] content = jsonSerializer.serialize(response);
+        }
 
-            FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(content));
-            fullHttpResponse.headers().set(CONTENT_TYPE, "application/json");
-            fullHttpResponse.headers().setInt(CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
+        JSONSerializer jsonSerializer = new JSONSerializer();
+        byte[] content = jsonSerializer.serialize(response);
 
-            boolean keepAlive = HttpUtil.isKeepAlive(request);
-            if (!keepAlive) {
-                ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
-            } else {
-                fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
-                ctx.write(fullHttpResponse);
-            }
+        FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(content));
+        fullHttpResponse.headers().set(CONTENT_TYPE, "application/json");
+        fullHttpResponse.headers().setInt(CONTENT_LENGTH, fullHttpResponse.content().readableBytes());
+
+        boolean keepAlive = HttpUtil.isKeepAlive(request);
+        if (!keepAlive) {
+            ctx.write(fullHttpResponse).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            fullHttpResponse.headers().set(CONNECTION, KEEP_ALIVE);
+            ctx.write(fullHttpResponse);
         }
     }
 
@@ -107,8 +109,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
         String contentType = typeStr.split(";")[0];
 
         // 可以使用 HttpJsonDecoder
-
-
         if ("application/json".equals(contentType)) {
             String jsonStr = fullRequest.content().toString(Charsets.toCharset(CharEncoding.UTF_8));
             JSONObject obj = JSON.parseObject(jsonStr);

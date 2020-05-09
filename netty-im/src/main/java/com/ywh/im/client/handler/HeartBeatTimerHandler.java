@@ -1,6 +1,6 @@
 package com.ywh.im.client.handler;
 
-import com.ywh.im.protocol.request.HeartBeatRequestPacket;
+import com.ywh.im.common.protocol.request.HeartBeatRequestPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 

@@ -1,9 +1,9 @@
 package com.ywh.im.server.handler;
 
-import com.ywh.im.protocol.request.MessageRequestPacket;
-import com.ywh.im.protocol.response.MessageResponsePacket;
-import com.ywh.im.session.Session;
-import com.ywh.im.session.SessionUtil;
+import com.ywh.im.common.protocol.request.MessageRequestPacket;
+import com.ywh.im.common.protocol.response.MessageResponsePacket;
+import com.ywh.im.common.session.Session;
+import com.ywh.im.common.session.SessionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

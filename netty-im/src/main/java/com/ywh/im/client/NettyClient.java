@@ -3,10 +3,10 @@ package com.ywh.im.client;
 import com.ywh.im.client.console.ConsoleCommandManager;
 import com.ywh.im.client.console.LoginConsoleCommand;
 import com.ywh.im.client.handler.*;
-import com.ywh.im.handler.SplitterHandler;
-import com.ywh.im.handler.ImIdleStateHandler;
-import com.ywh.im.handler.PacketCodecHandler;
-import com.ywh.im.session.SessionUtil;
+import com.ywh.im.common.handler.SplitterHandler;
+import com.ywh.im.common.handler.ImIdleStateHandler;
+import com.ywh.im.common.handler.PacketCodecHandler;
+import com.ywh.im.common.session.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -51,30 +51,22 @@ public class NettyClient {
                     /**
                      * 指定连接数据读写逻辑（责任链模式）
                      *
-                     * @param ch
+                     * @param sc
                      */
                     @Override
-                    protected void initChannel(SocketChannel ch) {
-                        ch.pipeline().addLast(new ImIdleStateHandler());
-                        ch.pipeline().addLast(new SplitterHandler());
-                        ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
-
-                        // 登录响应处理器
-                        ch.pipeline().addLast(new LoginResponseHandler());
-                        // 收消息处理器
-                        ch.pipeline().addLast(new MessageResponseHandler());
-                        // 创建群响应处理器
-                        ch.pipeline().addLast(new CreateGroupResponseHandler());
-                        // 加群响应处理器
-                        ch.pipeline().addLast(new JoinGroupResponseHandler());
-                        // 退群响应处理器
-                        ch.pipeline().addLast(new QuitGroupResponseHandler());
-                        // 获取群成员响应处理器
-                        ch.pipeline().addLast(new ListGroupMembersResponseHandler());
-                        // 登出响应处理器
-                        ch.pipeline().addLast(new LogoutResponseHandler());
-
-                        ch.pipeline().addLast(new HeartBeatTimerHandler());
+                    protected void initChannel(SocketChannel sc) {
+                        sc.pipeline()
+                            .addLast(new ImIdleStateHandler())
+                            .addLast(new SplitterHandler())
+                            .addLast(PacketCodecHandler.INSTANCE)
+                            .addLast(new LoginResponseHandler())
+                            .addLast(new MessageResponseHandler())
+                            .addLast(new CreateGroupResponseHandler())
+                            .addLast(new JoinGroupResponseHandler())
+                            .addLast(new QuitGroupResponseHandler())
+                            .addLast(new ListGroupMembersResponseHandler())
+                            .addLast(new LogoutResponseHandler())
+                            .addLast(new HeartBeatTimerHandler());
                     }
                 })
                 .attr(AttributeKey.newInstance("clientName"), "nettyClient")
@@ -116,8 +108,8 @@ public class NettyClient {
                     // 本次重连的间隔：指数退避策略
                     int delay = 1 << order;
                     System.err.println(new Date() + ": 连接失败，执行第 " + order + " 次重连...");
-                    bootstrap.config().group().schedule(
-                        () -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
+                    bootstrap.config().group()
+                        .schedule(() -> connect(bootstrap, host, port, retry - 1), 1 << order, TimeUnit.SECONDS);
                 }
             });
     }

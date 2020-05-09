@@ -10,51 +10,44 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author ywh
  * @since 2020/3/24/024
  */
+@Slf4j
 public class HttpServer {
-    private static final Logger log = LoggerFactory.getLogger(HttpServer.class);
-
     private static final int PORT = 8888;
 
     public static void main(String[] args) throws Exception {
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup parentGroup = new NioEventLoopGroup(1), childGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.option(ChannelOption.SO_BACKLOG, 1024);
-            b.childOption(ChannelOption.TCP_NODELAY,true);
-            b.childOption(ChannelOption.SO_KEEPALIVE,true);
-            b.group(bossGroup, workerGroup)
+            b.option(ChannelOption.SO_BACKLOG, 1024)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .group(parentGroup, childGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer() {
                     @Override
-                    protected void initChannel(Channel ch) {
-                        ChannelPipeline p = ch.pipeline();
-
-                        // 或者使用 HttpRequestDecoder & HttpResponseEncoder
-                        p.addLast(new HttpServerCodec());
-
-                        // 处理 POST 请求
-                        p.addLast(new HttpObjectAggregator(1024*1024));
-                        p.addLast(new HttpServerExpectContinueHandler());
-                        p.addLast(new HttpServerHandler());
+                    protected void initChannel(Channel c) {
+                        c.pipeline()
+                            .addLast(new HttpServerCodec())     // 或者使用 HttpRequestDecoder & HttpResponseEncoder
+                            .addLast(new HttpObjectAggregator(1024 * 1024))   // 处理 POST 请求
+                            .addLast(new HttpServerExpectContinueHandler())
+                            .addLast(new HttpServerHandler());
                     }
                 });
 
-            Channel ch = b.bind(PORT).sync().channel();
-            log.info("Netty http server listening on port "+ PORT);
-            ch.closeFuture().sync();
+            Channel c = b.bind(PORT).sync().channel();
+            log.info("Netty http server listening on port " + PORT);
+            c.closeFuture().sync();
         } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+            parentGroup.shutdownGracefully();
+            childGroup.shutdownGracefully();
         }
     }
 }

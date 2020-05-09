@@ -1,6 +1,6 @@
 package com.ywh.im.client.console;
 
-import com.ywh.im.protocol.request.LogoutRequestPacket;
+import com.ywh.im.common.protocol.request.LogoutRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;

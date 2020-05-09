@@ -1,6 +1,6 @@
 package com.ywh.im.client.handler;
 
-import com.ywh.im.protocol.response.MessageResponsePacket;
+import com.ywh.im.common.protocol.response.MessageResponsePacket;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

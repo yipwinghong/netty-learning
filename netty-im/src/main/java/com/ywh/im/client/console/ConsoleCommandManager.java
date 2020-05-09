@@ -1,6 +1,6 @@
 package com.ywh.im.client.console;
 
-import com.ywh.im.session.SessionUtil;
+import com.ywh.im.common.session.SessionUtil;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;

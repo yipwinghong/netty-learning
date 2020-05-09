@@ -1,9 +1,6 @@
 package com.ywh.im.server;
 
-import com.ywh.im.handler.PacketCodecHandler;
-import com.ywh.im.handler.SplitterHandler;
-import com.ywh.im.handler.ImIdleStateHandler;
-import com.ywh.im.server.handler.*;
+import com.ywh.im.common.handler.*;
 import com.ywh.im.server.handler.AuthHandler;
 import com.ywh.im.server.handler.HeartBeatRequestHandler;
 import com.ywh.im.server.handler.ImHandler;
@@ -24,7 +21,7 @@ import io.netty.util.AttributeKey;
  */
 public class NettyServer {
     public static void main(String[] args) throws InterruptedException {
-        // bossGroup 用于接收请求创建连接，workerGroup 用于读取数据处理业务逻辑
+        // parentGroup 用于接收请求创建连接，childGroup 用于读取数据处理业务逻辑
         NioEventLoopGroup parentGroup = new NioEventLoopGroup(), childGroup = new NioEventLoopGroup();
 
         // 引导服务端启动工作
@@ -64,19 +61,15 @@ public class NettyServer {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
 
-                        // 空闲检测必须放在最前面，如果插在后面，当这连接读到数据，但是在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判。
-                        ch.pipeline().addLast(new ImIdleStateHandler());
-                        ch.pipeline().addLast(new SplitterHandler());
-                        ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
-
-                        // 登录请求处理器
-                        ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
-
-                        ch.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(AuthHandler.INSTANCE);
-
-                        // 消息请求处理器
-                        ch.pipeline().addLast(ImHandler.INSTANCE);
+                        // 空闲检测必须放在最前面，如果插在后面，当连接读到数据，在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判
+                        ch.pipeline()
+                            .addLast(new ImIdleStateHandler())
+                            .addLast(new SplitterHandler())
+                            .addLast(PacketCodecHandler.INSTANCE)
+                            .addLast(LoginRequestHandler.INSTANCE)
+                            .addLast(HeartBeatRequestHandler.INSTANCE)
+                            .addLast(AuthHandler.INSTANCE)
+                            .addLast(ImHandler.INSTANCE);
                     }
                 })
             ;
@@ -100,10 +93,10 @@ public class NettyServer {
         serverBootstrap.bind(port).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("端口 [" + port + "] 绑定成功！");
-            } else {
-                System.err.println("端口 [" + port + "] 绑定失败！");
-                bind(serverBootstrap, port + 1);
+                return;
             }
+            System.err.println("端口 [" + port + "] 绑定失败！");
+            bind(serverBootstrap, port + 1);
         });
     }
 }
