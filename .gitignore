@@ -9,3 +9,11 @@
 *.mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 *.mvn/wrapper/maven-wrapper.jar
+.idea/
+netty-http/netty-http.iml
+netty-im/netty-im.iml
+netty-kafka/netty-kafka.iml
+netty-learning.iml
+netty-rpc/netty-rpc.iml
+netty-springboot/netty-springboot.iml
+netty-study.iml
