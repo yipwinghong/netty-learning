@@ -61,7 +61,7 @@ public class NettyServer {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
 
-                        // 空闲检测必须放在最前面，如果插在后面，当连接读到数据，在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判
+                        // 空闲检测必须放在最前面，否则在连接读到数据时，在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判
                         ch.pipeline()
                             .addLast(new ImIdleStateHandler())
                             .addLast(new SplitterHandler())

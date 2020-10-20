@@ -35,7 +35,6 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
             Channel channel = SessionUtil.getChannel(userName);
             if (channel != null) {
                 channelGroup.add(channel);
-
             }
         }
 

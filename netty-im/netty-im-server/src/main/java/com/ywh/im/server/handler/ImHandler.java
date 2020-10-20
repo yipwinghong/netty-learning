@@ -12,6 +12,9 @@ import static com.ywh.im.common.constant.Constant.*;
 
 /**
  * 压缩 Handler（只取出指定命令对应的 Handler，不需要经过其他）
+ * {@link ChannelHandler.Sharable} 标识一个 ChannelHandler 可以被多个 Channel 安全地共享。
+ * 一个 ChannelHandler 可以从属于多个 ChannelPipeline，所以它也可以绑定到多个 ChannelHandlerContext实例。
+ * 如果没有添加 Sharable 注解，当试图将它添加到多个 ChannelPipeline 时将会触发异常。
  *
  * @author ywh
  */

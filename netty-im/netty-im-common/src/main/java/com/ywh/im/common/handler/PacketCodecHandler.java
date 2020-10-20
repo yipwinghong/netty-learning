@@ -15,9 +15,7 @@ import java.util.List;
 public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, BasePacket> {
     public static final PacketCodecHandler INSTANCE = new PacketCodecHandler();
 
-    private PacketCodecHandler() {
-
-    }
+    private PacketCodecHandler() {}
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) {
