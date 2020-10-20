@@ -4,6 +4,7 @@ import com.ywh.netty.protobuf.UserMsg;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
@@ -27,10 +28,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class NettyServer {
+
     /**
      * 通过 Spring Boot 读取静态资源，实现 netty 配置文件的读写
      */
-
     @Value("${server.bind_port}")
     private Integer port;
 
@@ -58,53 +59,51 @@ public class NettyServer {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.valueOf(leakDetectorLevel.toUpperCase()));
 
         log.info("Starting Server");
-        //创建 parent 线程组 用于服务端接受客户端的连接
+        // 创建 parent 线程组用于服务端接受客户端的连接、child 线程组用于进行 SocketChannel 的数据读写。
         parentGroup = new NioEventLoopGroup(parentGroupThreadCount);
-        // 创建 child 线程组 用于进行 SocketChannel 的数据读写
         childGroup = new NioEventLoopGroup(childGroupThreadCount);
-        // 创建 ServerBootstrap 对象
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
-        //设置使用的 EventLoopGroup
-        serverBootstrap.group(parentGroup, childGroup)
-            //设置要被实例化的为 NioServerSocketChannel 类
+        // 创建 ServerBootstrap 对象。
+        ServerBootstrap serverBootstrap = new ServerBootstrap()
+            // 设置 EventLoopGroup。
+            .group(parentGroup, childGroup)
+            // 设置实例化 NioServerSocketChannel 类。
             .channel(NioServerSocketChannel.class)
-            // 设置 NioServerSocketChannel 的处理器
+            // 设置 NioServerSocketChannel 的处理器。
             .handler(new LoggingHandler(LogLevel.INFO))
-            // 设置连入服务端的 Client 的 SocketChannel 的处理器
-            .childHandler(new ChannelInitializer() {
-                @Override
-                protected void initChannel(Channel ch) {
-                    ChannelPipeline ph = ch.pipeline();
+            // 设置连入服务端的 Client 的 SocketChannel 的处理器。
+            .childHandler(
+                new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ChannelPipeline ph = ch.pipeline();
 
-                    // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式
-                    ph.addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
+                        // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式。
+                        ph.addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS))
 
-                    // 解码和编码，应和客户端一致
-                    // 传输的协议 Protobuf
-                    ph.addLast(new ProtobufVarint32FrameDecoder());
-                    ph.addLast(new ProtobufDecoder(UserMsg.User.getDefaultInstance()));
-                    ph.addLast(new ProtobufVarint32LengthFieldPrepender());
-                    ph.addLast(new ProtobufEncoder());
+                            // 解码和编码和客户端一致，传输的协议 Protobuf。
+                            .addLast(new ProtobufVarint32FrameDecoder())
+                            .addLast(new ProtobufDecoder(UserMsg.User.getDefaultInstance()))
+                            .addLast(new ProtobufVarint32LengthFieldPrepender())
+                            .addLast(new ProtobufEncoder())
 
-                    // 业务逻辑实现类
-                    ph.addLast("nettyServerHandler", new NettyServerHandler());
+                            // 业务逻辑实现类。
+                            .addLast("nettyServerHandler", new NettyServerHandler());
+                    }
                 }
-            });
-        // 绑定端口，并同步等待成功，即启动服务端
+            );
+        // 绑定端口，并同步等待成功，即启动服务端。
         channelFuture = serverBootstrap.bind(port).sync();
-
         log.info("Server started!");
-
     }
 
     @PreDestroy
     public void shutdown() throws InterruptedException {
         log.info("Stopping Server");
         try {
-            // 监听服务端关闭，并阻塞等待
+            // 监听服务端关闭，并阻塞等待。
             channelFuture.channel().closeFuture().sync();
         } finally {
-            // 优雅关闭两个 EventLoopGroup 对象
+            // 优雅关闭两个 EventLoopGroup 对象。
             childGroup.shutdownGracefully();
             parentGroup.shutdownGracefully();
         }

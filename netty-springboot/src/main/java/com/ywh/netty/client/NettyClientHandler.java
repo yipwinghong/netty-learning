@@ -49,8 +49,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 心跳请求处理 每4秒发送一次心跳请求;
-     *
+     * 心跳请求处理，每 4 秒发送一次心跳请求。
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object obj) {
@@ -79,8 +78,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         try {
-
-            // 得到protobuf的数据
+            // 得到 protobuf 的数据
             UserMsg.User userMsg = (UserMsg.User) msg;
 
             // 进行相应的业务处理

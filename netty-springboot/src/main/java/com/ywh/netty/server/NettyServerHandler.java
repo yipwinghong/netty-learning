@@ -25,7 +25,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private AtomicInteger count = new AtomicInteger(1);
 
-
     /**
      * 建立连接时，发送一条消息
      */

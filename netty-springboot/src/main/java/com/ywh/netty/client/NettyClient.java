@@ -4,6 +4,7 @@ import com.ywh.netty.protobuf.UserMsg;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
@@ -39,7 +40,7 @@ public class NettyClient {
 
     private EventLoopGroup group;
 
-    private ChannelFuture f;
+    private ChannelFuture future;
 
     /**
      * Netty 创建全部都是实现自 AbstractBootstrap。 客户端的是 Bootstrap，服务端的则是 ServerBootstrap。
@@ -54,7 +55,7 @@ public class NettyClient {
     public void shutdown() throws InterruptedException {
         log.info("正在停止客户端");
         try {
-            f.channel().closeFuture().sync();
+            future.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully();
         }
@@ -66,41 +67,41 @@ public class NettyClient {
      */
     void doConnect(Bootstrap bootstrap, EventLoopGroup group) {
         try {
-            if (bootstrap != null) {
-                bootstrap.group(group);
-                bootstrap.channel(NioSocketChannel.class);
-                bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                bootstrap.handler(new ChannelInitializer() {
-                    @Override
-                    protected void initChannel(Channel ch) {
-                        ChannelPipeline ph = ch.pipeline();
-                        // 解码和编码应和服务端一致
+            bootstrap
+                .group(group)
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(
+                    new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) {
+                            ChannelPipeline ph = ch.pipeline();
+                            // 解码和编码应和服务端一致
 
-                        // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式，心跳的读写时间应该小于服务端所设置的时间
-                        ph.addLast(new IdleStateHandler(0, 4, 0, TimeUnit.SECONDS));
+                            // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式，心跳的读写时间应该小于服务端所设置的时间
+                            ph.addLast(new IdleStateHandler(0, 4, 0, TimeUnit.SECONDS))
 
-                        // 传输的协议 Protobuf
-                        ph.addLast(new ProtobufVarint32FrameDecoder());
-                        ph.addLast(new ProtobufDecoder(UserMsg.User.getDefaultInstance()));
-                        ph.addLast(new ProtobufVarint32LengthFieldPrepender());
-                        ph.addLast(new ProtobufEncoder());
+                                // 传输的协议 Protobuf
+                                .addLast(new ProtobufVarint32FrameDecoder())
+                                .addLast(new ProtobufDecoder(UserMsg.User.getDefaultInstance()))
+                                .addLast(new ProtobufVarint32LengthFieldPrepender())
+                                .addLast(new ProtobufEncoder())
 
-                        // 业务逻辑实现类
-                        ph.addLast("nettyClientHandler", new NettyClientHandler());
-                    }
-                });
-                bootstrap.remoteAddress(host, port);
-                f = bootstrap.connect().addListener((ChannelFuture futureListener) -> {
-                    final EventLoop eventLoop = futureListener.channel().eventLoop();
-                    if (!futureListener.isSuccess()) {
-                        log.info("与服务端断开连接！在 10s 之后尝试重连！");
-                        eventLoop.schedule(() -> doConnect(new Bootstrap(), eventLoop), 10, TimeUnit.SECONDS);
-                    }
-                });
-                if (initFlag) {
-                    log.info("Netty 客户端启动成功！");
-                    initFlag = false;
+                                // 业务逻辑实现类
+                                .addLast("nettyClientHandler", new NettyClientHandler());
+                        }
+                    })
+                .remoteAddress(host, port);
+            future = bootstrap.connect().addListener((ChannelFuture futureListener) -> {
+                final EventLoop eventLoop = futureListener.channel().eventLoop();
+                if (!futureListener.isSuccess()) {
+                    log.info("与服务端断开连接！在 10s 之后尝试重连！");
+                    eventLoop.schedule(() -> doConnect(new Bootstrap(), eventLoop), 10, TimeUnit.SECONDS);
                 }
+            });
+            if (initFlag) {
+                log.info("Netty 客户端启动成功！");
+                initFlag = false;
             }
         } catch (Exception e) {
             log.info("客户端连接失败！" + e.getMessage());
