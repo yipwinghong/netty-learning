@@ -12,11 +12,11 @@
         <module>netty-rpc</module>
         <module>netty-http</module>
         <module>netty-im</module>
-        <module>netty-kafka</module>
         <module>netty-springboot</module>
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty-all.version>4.1.42.Final</netty-all.version>
         <lombok.version>1.16.12</lombok.version>
         <fastjson.version>1.2.29</fastjson.version>
