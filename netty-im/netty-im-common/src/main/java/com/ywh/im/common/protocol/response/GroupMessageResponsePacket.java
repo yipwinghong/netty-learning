@@ -14,7 +14,7 @@ import static com.ywh.im.common.constant.Constant.GROUP_MESSAGE_RESPONSE;
 @Data
 public class GroupMessageResponsePacket extends BasePacket {
 
-    private String fromGroupId;
+    private String fromGroupName;
 
     private Session fromUser;
 

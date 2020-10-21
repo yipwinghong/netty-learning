@@ -25,15 +25,15 @@ public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<Grou
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GroupMessageRequestPacket requestPacket) {
-        // 拿到 groupId 构造群聊消息的响应
-        String groupId = requestPacket.getToGroupId();
+        // 拿到 groupName 构造群聊消息的响应
+        String groupName = requestPacket.getToGroupName();
         GroupMessageResponsePacket responsePacket = new GroupMessageResponsePacket();
-        responsePacket.setFromGroupId(groupId);
+        responsePacket.setFromGroupName(groupName);
         responsePacket.setMessage(requestPacket.getMessage());
         responsePacket.setFromUser(SessionUtil.getSession(ctx.channel()));
 
         // 拿到群聊对应的 channelGroup，写到每个客户端
-        ChannelGroup channelGroup = SessionUtil.getChannelGroup(groupId);
+        ChannelGroup channelGroup = SessionUtil.getChannelGroup(groupName);
         channelGroup.writeAndFlush(responsePacket);
     }
 }

@@ -17,3 +17,9 @@ netty-learning.iml
 netty-rpc/netty-rpc.iml
 netty-springboot/netty-springboot.iml
 netty-study.iml
+netty-im/netty-im-client/src/main/resources/
+netty-im/netty-im-client/src/test/
+netty-im/netty-im-common/src/main/resources/
+netty-im/netty-im-common/src/test/
+netty-im/netty-im-server/src/main/resources/
+netty-im/netty-im-server/src/test/

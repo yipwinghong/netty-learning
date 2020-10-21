@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class NettyClient {
 
 
-    @Value("${server.bind_address}")
+    @Value("${server.bind_host}")
     private String host;
 
     @Value("${server.bind_port}")

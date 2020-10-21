@@ -43,7 +43,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 超时处理 如果 5 秒没有接受客户端的心跳则触发超时，如果超过两次超时则直接关闭;
+     * 超时处理 如果 5 秒没有接收客户端的心跳则触发超时，如果超过两次超时则直接关闭;
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -68,7 +68,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        log.info("服务端第 " + count.get() + " 次接受的消息：" + msg);
+        log.info("服务端第 " + count.get() + " 次接收的消息：" + msg);
         try {
             // 如果是protobuf类型的数据
             if (msg instanceof UserMsg.User) {
@@ -76,7 +76,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 if (user.getState() == 1) {
                     log.info("客户端业务处理成功！");
                 } else if (user.getState() == 2) {
-                    log.info("接受到客户端发送的心跳！");
+                    log.info("接收到客户端发送的心跳！");
                 } else {
                     log.info("未知命令！");
                 }

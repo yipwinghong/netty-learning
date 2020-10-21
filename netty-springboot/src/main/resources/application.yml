@@ -11,7 +11,7 @@ spring:
 
 server:
   enabled: true
-  bind_address: 0.0.0.0
+  bind_host: 0.0.0.0
   bind_port: 9876
   netty:
     #不进行内存泄露的检测

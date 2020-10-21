@@ -13,6 +13,7 @@
         <module>netty-http</module>
         <module>netty-im</module>
         <module>netty-springboot</module>
+        <module>netty-file</module>
     </modules>
 
     <properties>

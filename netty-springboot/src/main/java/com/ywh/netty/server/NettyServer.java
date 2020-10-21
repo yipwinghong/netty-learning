@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +36,9 @@ public class NettyServer {
     @Value("${server.bind_port}")
     private Integer port;
 
+    @Value("${server.bind_host}")
+    private String host;
+
     @Value("${server.netty.boss_group_thread_count}")
     private Integer parentGroupThreadCount;
 
@@ -49,19 +53,26 @@ public class NettyServer {
 
     private ChannelFuture channelFuture;
 
+    // 创建 parent 线程组用于服务端接收客户端的连接、child 线程组用于进行 SocketChannel 的数据读写。
+
     private EventLoopGroup parentGroup;
 
     private EventLoopGroup childGroup;
 
-    @PostConstruct
-    public void init() throws Exception {
-        log.info("Setting resource leak detector level to {}", leakDetectorLevel);
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.valueOf(leakDetectorLevel.toUpperCase()));
+    // @PostConstruct
+    public ChannelFuture bind() {
+        InetSocketAddress address = new InetSocketAddress(host, port);
+        return bind(address);
+    }
 
-        log.info("Starting Server");
-        // 创建 parent 线程组用于服务端接受客户端的连接、child 线程组用于进行 SocketChannel 的数据读写。
+
+    public ChannelFuture bind(InetSocketAddress address) {
         parentGroup = new NioEventLoopGroup(parentGroupThreadCount);
         childGroup = new NioEventLoopGroup(childGroupThreadCount);
+
+        log.info("Setting resource leak detector level to {}", leakDetectorLevel);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.valueOf(leakDetectorLevel.toUpperCase()));
+        log.info("starting server...");
         // 创建 ServerBootstrap 对象。
         ServerBootstrap serverBootstrap = new ServerBootstrap()
             // 设置 EventLoopGroup。
@@ -93,22 +104,32 @@ public class NettyServer {
                 }
             );
         // 绑定端口，并同步等待成功，即启动服务端。
-        channelFuture = serverBootstrap.bind(port).sync();
-        log.info("Server started!");
+        channelFuture = serverBootstrap.bind(address).syncUninterruptibly();
+        log.info("server started!");
+        return channelFuture;
     }
 
+    /**
+     *
+     */
     @PreDestroy
-    public void shutdown() throws InterruptedException {
-        log.info("Stopping Server");
-        try {
-            // 监听服务端关闭，并阻塞等待。
-            channelFuture.channel().closeFuture().sync();
-        } finally {
-            // 优雅关闭两个 EventLoopGroup 对象，返回 Future 对象通知。
-            childGroup.shutdownGracefully();
-            parentGroup.shutdownGracefully();
+    public void destroy() {
+        log.info("stopping Server...");
+        Channel channel = channelFuture.channel();
+        if (null == channel) {
+            return;
         }
+        channel.closeFuture().syncUninterruptibly();
+        parentGroup.shutdownGracefully();
+        childGroup.shutdownGracefully();
         log.info("server stopped!");
     }
 
+    /**
+     *
+     * @return
+     */
+    public Channel getChannel() {
+        return channelFuture.channel();
+    }
 }

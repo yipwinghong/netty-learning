@@ -17,7 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupMessageRequestPacket extends BasePacket {
-    private String toGroupId;
+
+    private String toGroupName;
+
     private String message;
 
     @Override

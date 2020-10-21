@@ -53,7 +53,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object obj) {
-        log.info("循环请求的时间：" + new Date() + "，次数" + loopCount.get());
+        log.info("循环请求的时间：" + new Date() + "，次数：" + loopCount.get());
         if (obj instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) obj;
             // 如果写通道处于空闲状态,就发送心跳命令
@@ -82,9 +82,9 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             UserMsg.User userMsg = (UserMsg.User) msg;
 
             // 进行相应的业务处理
-            log.info("客户端接受到的用户信息：" + userMsg.toString());
+            log.info("客户端接收到的用户信息：" + userMsg.toString());
 
-            // 这里返回一个已经接受到数据的状态
+            // 这里返回一个已经接收到数据的状态
             UserMsg.User.Builder userState = UserMsg.User
                 .newBuilder()
                 .setState(1);
