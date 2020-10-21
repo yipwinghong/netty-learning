@@ -87,6 +87,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            // 释放 ByteBuf 对象：由于 ByteBuf 是一个引用计数对象（ReferenceCounted），必须显式释放。
             ReferenceCountUtil.release(msg);
         }
         count.getAndIncrement();

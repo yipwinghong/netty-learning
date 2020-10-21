@@ -21,7 +21,7 @@ import io.netty.util.AttributeKey;
  */
 public class NettyServer {
     public static void main(String[] args) throws InterruptedException {
-        // parentGroup 用于接收请求创建连接，childGroup 用于读取数据处理业务逻辑
+        // parentGroup 用于接收请求创建连接，childGroup 用于读取数据处理业务逻辑。
         NioEventLoopGroup parentGroup = new NioEventLoopGroup(), childGroup = new NioEventLoopGroup();
 
         // 引导服务端启动工作
@@ -36,23 +36,24 @@ public class NettyServer {
                 .channel(NioServerSocketChannel.class)
 
                 // 指定在服务端启动过程中的逻辑
-                .handler(new ChannelInitializer<NioServerSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioServerSocketChannel ch) {
-                        System.out.println("服务端启动中...");
+                .handler(
+                    // ChannelInitializer 用于配置一个新的 Channel。
+                    new ChannelInitializer<NioServerSocketChannel>() {
+                        @Override
+                        protected void initChannel(NioServerSocketChannel ch) {
+                            System.out.println("服务端启动中...");
+                        }
                     }
-                })
-
-                // 为 NioServerSocketChannel 指定自定义属性
+                )
+                // 为 NioServerSocketChannel 设置选项和自定义属性：比如 TCP/IP 的服务端，常用 socket 的参数选项 tcpNoDelay、keepAlive 等。
+                // 属性配置项可参考接口文档：
+                // https://netty.io/4.0/api/io/netty/channel/ChannelOption.html
+                // https://netty.io/4.0/api/io/netty/channel/ChannelConfig.html
+                .option(ChannelOption.SO_BACKLOG, 1024)
                 .attr(AttributeKey.newInstance("serverName"), "nettyServer")
 
-                // 为 NioServerSocketChannel 设置属性
-                .option(ChannelOption.SO_BACKLOG, 1024)
-
-                // 为每条连接指定自定义属性
+                // 为每条连接指定自定义属性和选项。
                 .childAttr(AttributeKey.newInstance("clientKey"), "clientValue")
-
-                // 为每条连接设置一些TCP底层相关的属性
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childOption(ChannelOption.TCP_NODELAY, true)
 
@@ -64,7 +65,7 @@ public class NettyServer {
                         // 空闲检测必须放在最前面，否则在连接读到数据时，在 inBound 传播的过程中出错或者数据处理完毕就不往后传递，最终 ImIdleStateHandler 不会读到数据、导致误判
                         ch.pipeline()
                             .addLast(new ImIdleStateHandler())
-                            .addLast(new SplitterHandler())
+                            .addLast(new CustomizedFrameDecoder())
                             .addLast(PacketCodecHandler.INSTANCE)
                             .addLast(LoginRequestHandler.INSTANCE)
                             .addLast(HeartBeatRequestHandler.INSTANCE)

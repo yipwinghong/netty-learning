@@ -61,7 +61,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 UserMsg.User.Builder userState = UserMsg.User
                     .newBuilder()
                     .setState(2);
-                ctx.channel().writeAndFlush(userState);
+                ctx.writeAndFlush(userState);
                 loopCount.getAndIncrement();
             }
         }

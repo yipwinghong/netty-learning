@@ -24,7 +24,8 @@ public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, BasePacke
 
     @Override
     protected void encode(ChannelHandlerContext ctx, BasePacket packet, List<Object> out) {
-        ByteBuf byteBuf = ctx.channel().alloc().ioBuffer();
+        // 获取当前的 ByteBufAllocator，并分配一个新的缓冲。
+        ByteBuf byteBuf = ctx.alloc().ioBuffer();
         PacketCodec.INSTANCE.encode(byteBuf, packet);
         out.add(byteBuf);
     }

@@ -23,6 +23,5 @@ public class QuitGroupResponseHandler extends SimpleChannelInboundHandler<QuitGr
         } else {
             System.out.println("退出群聊 [" + responsePacket.getGroupName() + "] 失败！");
         }
-
     }
 }

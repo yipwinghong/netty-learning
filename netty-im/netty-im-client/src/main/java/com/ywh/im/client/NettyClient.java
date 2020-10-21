@@ -3,7 +3,7 @@ package com.ywh.im.client;
 import com.ywh.im.client.console.ConsoleCommandManager;
 import com.ywh.im.client.console.LoginConsoleCommand;
 import com.ywh.im.client.handler.*;
-import com.ywh.im.common.handler.SplitterHandler;
+import com.ywh.im.common.handler.CustomizedFrameDecoder;
 import com.ywh.im.common.handler.ImIdleStateHandler;
 import com.ywh.im.common.handler.PacketCodecHandler;
 import com.ywh.im.common.session.SessionUtil;
@@ -57,7 +57,7 @@ public class NettyClient {
                     protected void initChannel(SocketChannel sc) {
                         sc.pipeline()
                             .addLast(new ImIdleStateHandler())
-                            .addLast(new SplitterHandler())
+                            .addLast(new CustomizedFrameDecoder())
                             .addLast(PacketCodecHandler.INSTANCE)
                             .addLast(new LoginResponseHandler())
                             .addLast(new MessageResponseHandler())

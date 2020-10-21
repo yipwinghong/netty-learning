@@ -24,6 +24,6 @@ public class LogoutRequestHandler extends SimpleChannelInboundHandler<LogoutRequ
         SessionUtil.unBindSession(ctx.channel());
         LogoutResponsePacket logoutResponsePacket = new LogoutResponsePacket();
         logoutResponsePacket.setSuccess(true);
-        ctx.channel().writeAndFlush(logoutResponsePacket);
+        ctx.writeAndFlush(logoutResponsePacket);
     }
 }

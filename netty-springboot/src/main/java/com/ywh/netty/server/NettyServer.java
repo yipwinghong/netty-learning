@@ -75,10 +75,11 @@ public class NettyServer {
                 new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) {
-                        ChannelPipeline ph = ch.pipeline();
 
-                        // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式。
-                        ph.addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS))
+                        // ChannelPipeline：返回和该条连接相关的逻辑处理链，采用了责任链模式。
+                        ch.pipeline()
+                            // 入参说明: 读超时时间、写超时时间、所有类型的超时时间、时间格式。
+                            .addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS))
 
                             // 解码和编码和客户端一致，传输的协议 Protobuf。
                             .addLast(new ProtobufVarint32FrameDecoder())
@@ -103,7 +104,7 @@ public class NettyServer {
             // 监听服务端关闭，并阻塞等待。
             channelFuture.channel().closeFuture().sync();
         } finally {
-            // 优雅关闭两个 EventLoopGroup 对象。
+            // 优雅关闭两个 EventLoopGroup 对象，返回 Future 对象通知。
             childGroup.shutdownGracefully();
             parentGroup.shutdownGracefully();
         }
