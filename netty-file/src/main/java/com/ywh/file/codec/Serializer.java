@@ -1,4 +1,4 @@
-package com.ywh.file.util;
+package com.ywh.file.codec;
 
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
@@ -10,18 +10,16 @@ import org.objenesis.ObjenesisStd;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SerializationUtil {
+public class Serializer {
 
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 
     private static Objenesis objenesis = new ObjenesisStd();
 
-    private SerializationUtil() {
-
-    }
+    private Serializer() {}
 
     /**
-     * 序列化(对象 -> 字节数组)
+     * 序列化
      *
      * @param obj 对象
      * @return 字节数组
@@ -30,8 +28,7 @@ public class SerializationUtil {
         Class<T> cls = (Class<T>) obj.getClass();
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         try {
-            Schema<T> schema = getSchema(cls);
-            return ProtostuffIOUtil.toByteArray(obj, schema, buffer);
+            return ProtostuffIOUtil.toByteArray(obj, getSchema(cls), buffer);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
         } finally {
@@ -49,8 +46,7 @@ public class SerializationUtil {
     public static <T> T deserialize(byte[] data, Class<T> cls) {
         try {
             T message = objenesis.newInstance(cls);
-            Schema<T> schema = getSchema(cls);
-            ProtostuffIOUtil.mergeFrom(data, message, schema);
+            ProtostuffIOUtil.mergeFrom(data, message, getSchema(cls));
             return message;
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);

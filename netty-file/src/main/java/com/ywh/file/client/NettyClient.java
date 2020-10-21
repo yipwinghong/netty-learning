@@ -4,14 +4,11 @@ import com.ywh.file.codec.ObjDecoder;
 import com.ywh.file.codec.ObjEncoder;
 import com.ywh.file.domain.FileDescInfo;
 import com.ywh.file.domain.FileTransferProtocol;
-import com.ywh.file.util.SerializationUtil;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.MessageToByteEncoder;
 
 import java.io.File;
 

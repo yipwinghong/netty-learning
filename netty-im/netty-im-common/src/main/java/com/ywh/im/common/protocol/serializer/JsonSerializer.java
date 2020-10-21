@@ -1,5 +1,6 @@
 package com.ywh.im.common.protocol.serializer;
 
+
 import com.alibaba.fastjson.JSON;
 
 /**

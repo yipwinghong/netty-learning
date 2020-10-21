@@ -1,6 +1,5 @@
 package com.ywh.file.codec;
 
-import com.ywh.file.util.SerializationUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -28,7 +27,7 @@ public class ObjDecoder extends ByteToMessageDecoder {
         }
         byte[] data = new byte[dataLength];
         in.readBytes(data);
-        out.add(SerializationUtil.deserialize(data, genericClass));
+        out.add(Serializer.deserialize(data, genericClass));
     }
 
 }

@@ -13,30 +13,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.ywh.file.constant.FileStatus.BEGIN;
+import static com.ywh.file.constant.FileStatus.COMPLETE;
+import static com.ywh.file.constant.TransferType.INSTRUCT;
+
 public class MyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static Map<String, FileBurstInstruct> burstDataMap = new ConcurrentHashMap<>();
-
-    /**
-     * 当客户端主动链接服务端的链接后，这个通道就是活跃的了。也就是客户端与服务端建立了通信通道并且可以传输数据
-     */
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        SocketChannel channel = (SocketChannel) ctx.channel();
-        System.out.println("链接报告开始");
-        System.out.println("链接报告信息：有一客户端链接到本服务端。channelId：" + channel.id());
-        System.out.println("链接报告IP:" + channel.localAddress().getHostString());
-        System.out.println("链接报告Port:" + channel.localAddress().getPort());
-        System.out.println("链接报告完毕");
-    }
-
-    /**
-     * 当客户端主动断开服务端的链接后，这个通道就是不活跃的。也就是说客户端与服务端的关闭了通信通道并且不可以传输数据
-     */
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("客户端断开链接" + ctx.channel().localAddress().toString());
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -59,7 +42,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 抓住异常，当发生异常的时候，可以做一些相应的处理，比如打印日志、关闭链接
+     *
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -78,13 +61,13 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
 
         // 保存断点续传信息
         burstDataMap.put(fileBurstData.getFileName(), fileBurstInstruct);
-        fileTransferProtocol.setTransferType(Constants.TransferType.INSTRUCT);
+        fileTransferProtocol.setTransferType(INSTRUCT);
         fileTransferProtocol.setTransferObj(fileBurstInstruct);
         ctx.writeAndFlush(fileTransferProtocol);
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端，接收客户端传输文件数据。" + JSON.toJSONString(fileBurstData));
+        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 接收客户端传输文件数据。" + JSON.toJSONString(fileBurstData));
 
         //传输完成删除断点信息
-        if (fileBurstInstruct.getStatus() == Constants.FileStatus.COMPLETE) {
+        if (fileBurstInstruct.getStatus() == COMPLETE) {
             burstDataMap.remove(fileBurstData.getFileName());
         }
     }
@@ -102,24 +85,24 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
         FileBurstInstruct fileBurstInstructOld = burstDataMap.get(fileDescInfo.getFileName());
         if (null != fileBurstInstructOld) {
             // 传输完成删除断点信息
-            if (fileBurstInstructOld.getStatus() == Constants.FileStatus.COMPLETE) {
+            if (fileBurstInstructOld.getStatus() == COMPLETE) {
                 burstDataMap.remove(fileDescInfo.getFileName());
             }
-            System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端，接收客户端传输文件请求[断点续传]。" + JSON.toJSONString(fileBurstInstructOld));
-            fileTransferProtocol.setTransferType(Constants.TransferType.INSTRUCT);
+            System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 接收客户端传输文件请求[断点续传]。" + JSON.toJSONString(fileBurstInstructOld));
+            fileTransferProtocol.setTransferType(INSTRUCT);
             fileTransferProtocol.setTransferObj(fileBurstInstructOld);
             ctx.writeAndFlush(fileTransferProtocol);
             return;
         }
 
         FileBurstInstruct fileBurstInstruct = new FileBurstInstruct();
-        fileBurstInstruct.setStatus(Constants.FileStatus.BEGIN);
+        fileBurstInstruct.setStatus(BEGIN);
         fileBurstInstruct.setClientFileUrl(fileDescInfo.getFileUrl());
         fileBurstInstruct.setReadPosition(0);
-        fileTransferProtocol.setTransferType(Constants.TransferType.INSTRUCT);
+        fileTransferProtocol.setTransferType(INSTRUCT);
         fileTransferProtocol.setTransferObj(fileBurstInstruct);
         ctx.writeAndFlush(fileTransferProtocol);
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端，接收客户端传输文件请求。" + JSON.toJSONString(fileDescInfo));
+        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 接收客户端传输文件请求。" + JSON.toJSONString(fileDescInfo));
     }
 
 }

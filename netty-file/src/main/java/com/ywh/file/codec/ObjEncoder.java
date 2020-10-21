@@ -1,6 +1,5 @@
 package com.ywh.file.codec;
 
-import com.ywh.file.util.SerializationUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -16,7 +15,7 @@ public class ObjEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext ctx, Object in, ByteBuf out)  {
         if (genericClass.isInstance(in)) {
-            byte[] data = SerializationUtil.serialize(in);
+            byte[] data = Serializer.serialize(in);
             out.writeInt(data.length);
             out.writeBytes(data);
         }
